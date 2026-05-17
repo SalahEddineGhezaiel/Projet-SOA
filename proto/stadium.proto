@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package stadium;
+
+// ─── Messages ────────────────────────────────────────────────────────────────
+
+message Stadium {
+  int32 id              = 1;
+  string name           = 2;
+  string city           = 3;
+  string address        = 4;
+  double price_per_slot = 5;
+}
+
+message Slot {
+  int32  id           = 1;
+  int32  stadium_id   = 2;
+  string date         = 3;  // YYYY-MM-DD
+  string start_time   = 4;  // HH:MM
+  string end_time     = 5;  // HH:MM
+  bool   is_available = 6;
+}
+
+// ─── Request / Response ──────────────────────────────────────────────────────
+
+message GetStadiumRequest {
+  int32 id = 1;
+}
+
+message GetStadiumResponse {
+  Stadium stadium = 1;
+}
+
+message ListStadiumsRequest {
+  string city = 1;   // optional filter
+}
+
+message ListStadiumsResponse {
+  repeated Stadium stadiums = 1;
+}
+
+message ListSlotsRequest {
+  int32  stadium_id = 1;
+  string date       = 2;  // optional filter (YYYY-MM-DD)
+}
+
+message ListSlotsResponse {
+  repeated Slot slots = 1;
+}
+
+message CheckAvailabilityRequest {
+  int32  slot_id = 1;
+}
+
+message CheckAvailabilityResponse {
+  bool   is_available = 1;
+  string message      = 2;
+}
+
+message UpdateSlotAvailabilityRequest {
+  int32 slot_id       = 1;
+  bool  is_available  = 2;
+}
+
+message UpdateSlotAvailabilityResponse {
+  bool   success = 1;
+  string message = 2;
+}
+
+// ─── Service ─────────────────────────────────────────────────────────────────
+
+service StadiumService {
+  rpc GetStadium               (GetStadiumRequest)               returns (GetStadiumResponse);
+  rpc ListStadiums             (ListStadiumsRequest)             returns (ListStadiumsResponse);
+  rpc ListSlots                (ListSlotsRequest)                returns (ListSlotsResponse);
+  rpc CheckAvailability        (CheckAvailabilityRequest)        returns (CheckAvailabilityResponse);
+  rpc UpdateSlotAvailability   (UpdateSlotAvailabilityRequest)   returns (UpdateSlotAvailabilityResponse);
+}

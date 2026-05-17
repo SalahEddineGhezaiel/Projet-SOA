@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package notification;
+
+// ─── Messages ────────────────────────────────────────────────────────────────
+
+message Notification {
+  string id         = 1;   // RxDB uses string UUIDs
+  string user_id    = 2;
+  string message    = 3;
+  string type       = 4;   // "reservation.created" | "reservation.cancelled" | "slot.updated"
+  bool   read       = 5;
+  string created_at = 6;   // ISO timestamp
+}
+
+// ─── Request / Response ──────────────────────────────────────────────────────
+
+message GetNotificationsRequest {
+  string user_id = 1;
+}
+
+message GetNotificationsResponse {
+  repeated Notification notifications = 1;
+}
+
+message MarkAsReadRequest {
+  string notification_id = 1;
+}
+
+message MarkAsReadResponse {
+  bool   success = 1;
+  string message = 2;
+}
+
+// ─── Service ─────────────────────────────────────────────────────────────────
+
+service NotificationService {
+  rpc GetNotifications (GetNotificationsRequest) returns (GetNotificationsResponse);
+  rpc MarkAsRead       (MarkAsReadRequest)        returns (MarkAsReadResponse);
+}

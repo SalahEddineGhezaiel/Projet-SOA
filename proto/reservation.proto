@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package reservation;
+
+// ─── Messages ────────────────────────────────────────────────────────────────
+
+message Reservation {
+  int32  id         = 1;
+  int32  user_id    = 2;
+  int32  stadium_id = 3;
+  int32  slot_id    = 4;
+  string status     = 5;   // "confirmed" | "cancelled"
+  string created_at = 6;   // ISO timestamp
+}
+
+message User {
+  int32  id    = 1;
+  string name  = 2;
+  string phone = 3;
+}
+
+// ─── Request / Response ──────────────────────────────────────────────────────
+
+message CreateReservationRequest {
+  int32  user_id    = 1;
+  int32  stadium_id = 2;
+  int32  slot_id    = 3;
+  string user_name  = 4;   // used to auto-create user if not exists
+  string user_phone = 5;
+}
+
+message CreateReservationResponse {
+  bool        success     = 1;
+  string      message     = 2;
+  Reservation reservation = 3;
+}
+
+message CancelReservationRequest {
+  int32 id = 1;
+}
+
+message CancelReservationResponse {
+  bool   success = 1;
+  string message = 2;
+}
+
+message GetReservationRequest {
+  int32 id = 1;
+}
+
+message GetReservationResponse {
+  Reservation reservation = 1;
+}
+
+message ListUserReservationsRequest {
+  int32 user_id = 1;
+}
+
+message ListUserReservationsResponse {
+  repeated Reservation reservations = 1;
+}
+
+// ─── Service ─────────────────────────────────────────────────────────────────
+
+service ReservationService {
+  rpc CreateReservation      (CreateReservationRequest)      returns (CreateReservationResponse);
+  rpc CancelReservation      (CancelReservationRequest)      returns (CancelReservationResponse);
+  rpc GetReservation         (GetReservationRequest)         returns (GetReservationResponse);
+  rpc ListUserReservations   (ListUserReservationsRequest)   returns (ListUserReservationsResponse);
+}
